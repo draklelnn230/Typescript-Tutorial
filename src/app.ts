@@ -1,60 +1,100 @@
-// Code goes here
-// const userName = 'Max';
-// let age = 30;
+class Department {
+    static fiscalYear = 2022
+    // private id: string;
+    // private name: string;
+    protected employees: string[] = [];
 
-// age = 29;
+    constructor(protected readonly id: string, public name: string) {
+        // this.id = id;
+        // this.name = name;
+    }
+    static createEmployee(name: string) {
+        return { name: name}
+    }
+    describe(this: Department) {
+        console.log(`Department (${this.id}): ${this.name}`);
+    }
+    addEmployee(employee: string) {
+        this.employees.push(employee);
+    }
 
-// function add(a: number, b: number) {
-//     let result = a + b;
-//     return result;
-// }
-
-// const add = (a: number, b: number = 1) => a + b;
-
-
-// const printOutput: (a: number | string) => void = output => console.log(output)
-
-// const button = document.querySelector('button')
-
-// if (button) {
-//     button.addEventListener('click', event => {
-//         console.log(event)
-//     })
-// }
-
-// printOutput(add(5))
-
-// The Spread Operator
-const hobbies = ['Sports', 'Cooking'];
-const activeHobbies = ['Hiking']
-
-activeHobbies.push(...hobbies)
-
-const person = {
-    firstName: 'Max',
-    age: 30
+    printEmployeeInfo() {
+        console.log(this.employees.length);
+        console.log(this.employees);
+    }
 }
 
-const copiedPerson = { ...person } // This Copy will remove the reference.
+class ITDepartment extends Department {
+    admins: string[];
 
-// The Rest Parameter
-const add = (...numbers: number[]) => {
-    let result = 0;
-    return numbers.reduce((currentResult, curValue) => {
-        return currentResult + curValue
-    }, 0)
+    constructor(id: string, admins: string[]) {
+        super(id, 'IT');
+        this.admins = admins;
+    }
 }
 
+class AccountingDepartment extends Department {
 
-const addedNumber = add(5, 10, 2, 3.7)
-console.log(addedNumber)
+    private lastReport: string;
 
-// Array & Object Destructuring
+    // getter
+    get mostRecentReport() {
+        if (this.lastReport) {
+            return this.lastReport
+        }
+        throw new Error('No report found.');
+    }
 
-const [hobby1, hobby2, ...remainingHobbies] = hobbies
+    set mostRecentReport(value: string) {
+        if ( !value ) {
+            throw new Error('Please pass in a valid value!')
+        }
+        this.addReport(value)
+    }
 
-console.log(hobby2)
+    constructor(id: string, private reports: string[]) {
+        super(id, 'Accounting');
+        this.lastReport = reports[0];
+    }
 
-const { firstName: userName, age } = person
+    describe() {
+        console.log('Accounting Department - ID: ' + this.id);
+    }
 
-console.log(userName)
+    addEmployee(name: string) {
+        if (name === 'Max') {
+            return;
+        }
+        this.employees.push(name);
+    }
+
+    addReport(text: string) {
+        this.reports.push(text)
+        this.lastReport = text;
+    }
+
+    printReports() {
+        console.log(this.reports)
+    }
+}
+
+const employee1 = Department.createEmployee('Max')
+console.log(employee1, Department.fiscalYear)
+
+const accounting = new AccountingDepartment('d2', [])
+
+accounting.addEmployee('Max')
+accounting.addEmployee('John');
+
+accounting.addReport('Something wrong')
+
+// Getter
+accounting.printReports()
+
+// Setter
+accounting.mostRecentReport = 'Year'
+
+accounting.describe();
+
+console.log(accounting.mostRecentReport)
+
